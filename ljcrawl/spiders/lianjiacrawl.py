@@ -2,7 +2,7 @@
 import scrapy
 from scrapy import Selector
 import time
-
+import re
 from ljcrawl.items import LjcrawlItem
 
 
@@ -23,28 +23,41 @@ class LianjiacrawlSpider(scrapy.Spider):
         print("parse:"+str(time.time()))
         page=response.meta["page"]
         sel = Selector(response)
-        house_lit_li = sel.css('.house-lst li')
+        house_lit_li = sel.css('.content__list .content__list--item')
         print("page:"+str(page)+",length:"+str(len(house_lit_li)))
         for li in  house_lit_li:
-             house_name = li.xpath('*[@class="info-panel"]/h2/a/text()').extract_first()
-             house_price=li.xpath('*[@class="info-panel"]/div[@class="col-3"]/div[@class="price"]/span/text()').extract_first()
-             where_sel=li.xpath('*[@class="info-panel"]/div[@class="col-1"]/div[@class="where"]')
-             xiaoqu=where_sel.xpath('./a/span[@class="region"]/text()').extract_first()
-             zone=where_sel.xpath('./span[@class="zone"]/span/text()').extract_first()
-             meters=where_sel.xpath('./span[@class="meters"]/text()').extract_first()
-             directon=where_sel.xpath('./span[3]/text()').extract_first()
-             con_sel=li.xpath('*[@class="info-panel"]/div[@class="col-1"]/div[@class="other"]/div[@class="con"]')
-             region=con_sel.xpath('./a/text()').extract_first()
-             floor=con_sel.xpath('./text()').extract()[0]
-             description=con_sel.xpath('./text()').extract()[1]
+            
+             house_name = re.sub(r'\s+','',li.xpath('./div[@class="content__list--item--main"]/p[@class="content__list--item--title twoline"]/a/text()').extract_first())
+            #  print("house_name:"+house_name)
+            # #  
+             house_price=li.xpath('./div[@class="content__list--item--main"]/span[@class="content__list--item-price"]/em/text()').extract_first()
+            #  print("house_price:"+house_price)
+             where_sel=li.xpath('./div[@class="content__list--item--main"]/p[@class="content__list--item--des"]')
+             xiaoqu=where_sel.xpath('./a[3]/text()').extract_first()
+            #  print("xiaoqu:"+xiaoqu)
+             zone=re.sub(r'\s+','',where_sel.xpath('./text()[7]').extract_first())
+            #  print("zone:"+zone)
+             meters=re.sub(r'\s+','',where_sel.xpath('./text()[5]').extract_first())
+            #  print("meters:"+meters)
+             directon=where_sel.xpath('./text()[6]').extract_first()
+            #  print("directon:"+directon)
+            #  con_sel=li.xpath('*[@class="info-panel"]/div[@class="col-1"]/div[@class="other"]/div[@class="con"]')
+             region=where_sel.xpath('./a[2]/text()').extract_first()
+            #  print("region:"+region)
+             
+             floor=re.sub(r'\s+','', where_sel.xpath('./span[@class="hide"]/text()').extract()[1])
+            #  print("floor:"+floor)
+             area=where_sel.xpath('./a[1]/text()').extract_first()
+            #  print("area:"+area)
              item= LjcrawlItem()
              item['house_name'] = house_name
              item['house_price'] = house_price
+             item['area'] = area
+             item['region'] = region
              item['xiaoqu'] = xiaoqu
              item['zone'] = zone
              item['meters'] = meters
              item['directon'] = directon
-             item['region'] = region
              item['floor'] = floor
-             item['description'] = description
+             
              yield item

@@ -20,5 +20,5 @@ class LjcrawlItem(scrapy.Item):
 
     region = scrapy.Field()
     floor = scrapy.Field()
-    description = scrapy.Field()
+    area = scrapy.Field()
 
