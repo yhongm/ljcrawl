@@ -8,8 +8,9 @@ from ljcrawl.items import LjcrawlItem
 
 class LianjiacrawlSpider(scrapy.Spider):
     name = "lianjiacrawl"
-    allowed_domains = ["bj.lianjia.com"]
-    start_urls = ['http://bj.lianjia.com/']
+    allowed_domains = ["bj.lianjia.com","bj.zu.ke.com"]
+    # start_urls = ['http://bj.lianjia.com/'] #lianjia
+    start_urls = ['https://bj.zu.ke.com'] #beike
 
     # https: // bj.lianjia.com / zufang / pg1 /
 

@@ -2,12 +2,10 @@
 import pandas as pd
 from os import path
 
-def parse_csv():
+def parse_csv(csv_name):
     dir = path.dirname('.')
-    print("dir:"+path.abspath(''))
-
-    df = pd.read_csv(path.join(dir, 'item.csv'))
-    r=df.groupby('xiaoqu')
+    df = pd.read_csv(path.join(dir, '%s.csv'%csv_name))
+    r=df.groupby('area')
     v=r.house_price.agg(['max','min','mean','count'])
     print(v)
 
@@ -15,6 +13,8 @@ def parse_csv():
 
 
 if __name__ == "__main__":
-
-    parse_csv()
+    print("-------------------贝壳-------------------------")
+    parse_csv('beike')
+    print("-------------------链家-------------------------")
+    parse_csv('lianjia')
 
